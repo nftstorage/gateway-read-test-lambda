@@ -1,0 +1,48 @@
+{
+  "name": "gateway-read-test-lambda",
+  "version": "1.0.0",
+  "description": "Gateway read test on car write",
+  "homepage": "https://github.com/nftstorage/gateway-read-test-lambda",
+  "repository": "github:nftstorage/gateway-read-test-lambda",
+  "author": "Vasco Santos <santos.vasco10@gmail.com>",
+  "license": "(Apache-2.0 AND MIT)",
+  "private": true,
+  "scripts": {
+    "format": "prettier -w src",
+    "build": "bash scripts/build.sh",
+    "test": "npm-run-all -p -r mock:gateway.nft.storage test:lambda",
+    "test:lambda": "ava",
+    "mock:gateway.nft.storage": "smoke -p 9081 mocks/gateway.nft.storage",
+    "deploy": "aws lambda update-function-code --cli-connect-timeout 15000 --region $AWS_REGION --function-name $LAMBDA --zip-file fileb://dist/lambda.zip",
+    "deploy-l": "aws lambda update-function-code --cli-connect-timeout 15000 --region us-east-2 --function-name gw-read-test --zip-file fileb://dist/lambda.zip",
+    "invoke": "aws lambda invoke --cli-binary-format raw-in-base64-out --region $AWS_REGION --function-name $LAMBDA --payload file://event.json --log-type Tail /dev/null | jq -r .LogResult | base64 -d"
+  },
+  "dependencies": {
+    "@ipld/car": "^3.2.3",
+    "@ipld/dag-cbor": "^7.0.0",
+    "@ipld/dag-pb": "^2.1.15",
+    "aws-sdk": "^2.1048.0",
+    "dotenv": "^10.0.0",
+    "multiformats": "^9.5.4",
+    "node-abort-controller": "^3.0.1",
+    "node-fetch": "^2.6.6",
+    "pino": "^7.6.2"
+  },
+  "devDependencies": {
+    "@web-std/blob": "^3.0.1",
+    "ava": "^3.15.0",
+    "aws-sdk-mock": "^5.5.0",
+    "carbites": "^1.0.6",
+    "ipfs-car": "^0.6.1",
+    "npm-run-all": "^4.1.5",
+    "pino-pretty": "^7.3.0",
+    "prettier": "^2.4.1",
+    "smoke": "^3.1.1"
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": false,
+    "singleQuote": true
+  }
+}
